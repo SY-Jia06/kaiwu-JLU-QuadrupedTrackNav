@@ -1,0 +1,182 @@
+# =============================================================================
+# P6 Track Base: transfer the standard locomotion policy to track traversal.
+# P6 Track Base：将 standard locomotion 策略迁移到 track 赛道通行。
+#
+# This stage appends 4 compact goal features to the policy/critic observations:
+# policy 301→305, critic 316→320. Standard checkpoints remain usable through
+# partial loading: old input weights are copied and the new goal-input columns
+# start at zero.
+# 本阶段向 policy/critic 观测追加 4 维目标特征：policy 301→305，critic 316→320。
+# Standard checkpoint 通过部分加载继续可用：旧输入权重复制，新目标输入列从 0 开始。
+# =============================================================================
+
+[env]
+# Track episodes are longer than standard single-terrain episodes.
+# Track 赛道由多段地形串联，episode 需要比 standard 更长。
+num_envs = 2048
+episode_length_s = 120.0
+
+[env_conf]
+seed = 0
+
+[terrain]
+mode = "track"
+
+# In track mode, num_rows is overridden by [terrain.track].track_length.
+# track 模式下 num_rows 会被 [terrain.track].track_length 覆盖。
+num_rows = 10
+
+# In track mode, num_cols is the number of parallel difficulty lanes.
+# track 模式下 num_cols 表示并行难度赛道数量。
+num_cols = 10
+
+# P9 starts from the P8-1_12000 candidate and performs a conservative full-band
+# consolidation pass. Keep hard initialization available, but use low learning
+# rate and short checkpoint sweeps to avoid washing out the level8/9 gains.
+# P9 从 P8-1_12000 候选出发做保守全量巩固。保留最高难初始化，
+# 但用低学习率和 10 step 短扫，避免洗掉 level8/9。
+difficulty_range = [0.0, 1.0]
+curriculum = true
+
+# Keep all initial terrain levels available during the final polish pass.
+# 最终精修阶段仍允许从所有难度初始化。
+max_init_terrain_level = 9
+
+[terrain.track]
+track_length = 5
+sub_terrains = ["pyramid_slope", "pyramid_slope_inv", "pyramid_stairs", "pyramid_stairs_inv", "open_entry_maze"]
+
+[domain_rand]
+enable_domain_rand = true
+randomize_friction = true
+friction_range = [0.5, 1.3]
+push_robots = false
+push_interval_s = 15
+max_push_vel_xy = 0.5
+
+[noise]
+add_noise = true
+
+[init_state]
+pos = [0.0, 0.0, 0.35]
+
+[commands]
+resampling_time = [5.0, 5.0]
+
+[commands.limit]
+# Keep forward speed lower than standard and allow controlled turning.
+# 相比 standard 降低速度，并允许可控转向。
+lin_vel_x = [0.0, 0.8]
+lin_vel_y = [-0.2, 0.2]
+ang_vel_z = [-1.2, 1.2]
+
+[commands.ranges]
+lin_vel_x = [0.2, 0.6]
+lin_vel_y = [-0.1, 0.1]
+ang_vel_yaw = [-0.8, 0.8]
+
+# =============================================================================
+# Reward Configuration
+# =============================================================================
+
+[rewards.track_lin_vel_xy]
+weight = 0.6
+[rewards.track_lin_vel_xy.params]
+std = 0.35
+command_name = "base_velocity"
+
+[rewards.track_ang_vel_z]
+weight = 0.15
+[rewards.track_ang_vel_z.params]
+std = 0.4
+command_name = "base_velocity"
+
+[rewards.feet_air_time]
+weight = 0.3
+[rewards.feet_air_time.params]
+command_name = "base_velocity"
+threshold = 0.2
+
+[rewards.approach_goal]
+weight = 2.0
+
+[rewards.reach_goal]
+weight = 50.0
+[rewards.reach_goal.params]
+threshold = 0.6
+
+[rewards.navigation_time]
+weight = -0.01
+
+[rewards.heuristic_navigation]
+weight = 2.0
+[rewards.heuristic_navigation.params]
+obstacle_threshold = -0.3
+near_x_end = 10
+body_y_start = 3
+body_y_end = 13
+speed_std = 0.6
+blocked_scale = 0.6
+
+[rewards.deadend_escape]
+weight = 0.8
+[rewards.deadend_escape.params]
+obstacle_threshold = -0.3
+near_x_end = 10
+body_y_start = 3
+body_y_end = 13
+trapped_threshold = 0.3
+progress_threshold = 0.05
+turn_std = 0.6
+
+[rewards.wall_proximity_brake]
+weight = -1.0
+[rewards.wall_proximity_brake.params]
+obstacle_threshold = -0.3
+near_x_end = 8
+body_y_start = 3
+body_y_end = 13
+slow_speed = 0.15
+fast_speed = 0.8
+
+[rewards.obstacle_evasion]
+weight = -1.5
+[rewards.obstacle_evasion.params]
+command_name = "base_velocity"
+obstacle_threshold = -0.3
+near_x_end = 10
+body_y_start = 3
+body_y_end = 13
+turn_std = 0.5
+
+[rewards.termination]
+weight = -8.0
+
+[rewards.lin_vel_z]
+weight = -3.0
+
+[rewards.ang_vel_xy]
+weight = -0.08
+
+[rewards.joint_acc]
+weight = -2.5e-7
+
+[rewards.joint_torques]
+weight = -2.0e-4
+
+[rewards.dof_pos_limits]
+weight = -2.0
+
+[rewards.action_rate]
+weight = -0.015
+
+[rewards.undesired_contacts]
+weight = -2.5
+[rewards.undesired_contacts.params]
+threshold = 1
+
+[rewards.feet_stumble]
+weight = -0.1
+
+[rewards.flat_orientation]
+weight = -3.0

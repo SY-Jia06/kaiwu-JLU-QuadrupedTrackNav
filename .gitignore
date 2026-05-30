@@ -1,0 +1,37 @@
+# Python caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Local environments
+.venv/
+venv/
+env/
+
+# macOS and editor state
+.DS_Store
+__MACOSX/
+.vscode/
+.idea/
+
+# Local agent/tool state
+.omc/
+.omx/
+
+# Training and evaluation outputs
+runs/
+logs/
+wandb/
+checkpoints/
+*.pt
+*.pth
+*.onnx
+*.mp4
+
+# Platform/local secrets
+license.dat
+*.key
+*.pem
