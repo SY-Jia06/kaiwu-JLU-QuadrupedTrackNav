@@ -198,44 +198,82 @@
             <b>65.78 overall</b>
           </article>
         </div>
-        <div class="evidence-row">
-          <article>
-            <span>问题</span>
-            <b>反台阶 time 仍为 0</b>
-            <p>P1 会向前走，但还没把 gait 迁移到最难的 standard 地形。</p>
-          </article>
-          <article class="selected">
-            <span>结果</span>
-            <b>stairs_inv 26.46/0 → 65.35/12.43</b>
-            <p>time 被打开，说明不是“更会站”，而是困难地形推进能力出现了。</p>
-          </article>
-          <article>
-            <span>原则</span>
-            <b>只改地形分布</b>
-            <p>这一页只解释 P2：不混 reward、不混 track、不混导航算法。</p>
-          </article>
+        <div class="data-video-row">
+          <div class="table-panel">
+            <span>平台 eval 扫点</span>
+            <table class="data-table">
+              <thead>
+                <tr><th>ckpt</th><th>总分</th><th>forward</th><th>time</th><th>pose</th><th>energy</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>P1-2500</td><td>57.86</td><td>68.68</td><td>16.59</td><td>65.29</td><td>70.03</td></tr>
+                <tr><td>P2-3000</td><td>61.38</td><td>77.76</td><td>21.98</td><td>66.68</td><td>62.72</td></tr>
+                <tr><td>P2-3500</td><td>65.12</td><td>83.26</td><td>29.35</td><td>64.05</td><td>65.67</td></tr>
+                <tr class="chosen"><td>P2-4000</td><td>65.78</td><td>85.38</td><td>25.92</td><td>62.74</td><td>69.47</td></tr>
+                <tr><td>P2-4500</td><td>64.94</td><td>85.84</td><td>33.32</td><td>55.38</td><td>64.33</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="video-slot compact">
+            <span>视频/GIF 槽</span>
+            <b>P1 反台阶停滞 vs P2-4000 反台阶 time 打开</b>
+          </div>
         </div>
       </section>
 
       <section class="slide" id="s06">
         <div class="slide-number">06</div>
         <h2>第三节课：课程不能一次性过载，必须拆变量</h2>
-        <div class="lesson-layout">
-          <div>
-            <p class="claim small">
-              P3 把 full difficulty、maze、push、reward penalty 等变量一起加，结果不是更强，而是崩。
-              这个失败反过来确定了后续实验纪律：每一阶段只改一个主要变量。
-            </p>
-            <div class="timeline">
-              <div><b>P3</b><span>过载课程失败，P3-7000 掉到 23.61，说明“更难”不等于“学得更好”。</span></div>
-              <div><b>P3+</b><span>拆回单变量，只加全难度，P3+-5000 恢复到 70.10。</span></div>
-              <div><b>原则</b><span>后续 P6/P8/P9 都沿用这个纪律：用失败定位变量，再用 checkpoint sweep 选下一棒。</span></div>
-            </div>
+        <p class="plain-thesis slide-intro">
+          P2 之后我们想直接进入更完整的 standard 分布。第一次 P3 把 full difficulty、maze、push、reward penalty 一起加，结果越训越差；P3+ 把变量拆开，只开放全难度，分数立刻恢复。
+        </p>
+        <div class="curriculum-flow compact-flow">
+          <article class="flow-card">
+            <span>起点</span>
+            <h3>P2-4000</h3>
+            <p>地形迁移已经成立，准备提高课程覆盖。</p>
+            <b>65.78 overall</b>
+          </article>
+          <div class="flow-arrow">→</div>
+          <article class="flow-card danger">
+            <span>失败</span>
+            <h3>P3 过载</h3>
+            <p>全难度 + maze + push + reward penalty 一起上，无法归因。</p>
+            <b>7000 掉到 23.61</b>
+          </article>
+          <div class="flow-arrow">→</div>
+          <article class="flow-card selected">
+            <span>修复</span>
+            <h3>P3+ 拆变量</h3>
+            <p>回到 P2-4000，只开放 full difficulty，其余保持不动。</p>
+            <b>5000 恢复到 70.10</b>
+          </article>
+          <div class="flow-arrow">→</div>
+          <article class="flow-card selected">
+            <span>原则</span>
+            <h3>一次只改一个主变量</h3>
+            <p>后续 P6/P8/P9 都沿用这个纪律：用失败定位变量，再扫 checkpoint。</p>
+            <b>实验可解释</b>
+          </article>
+        </div>
+        <div class="data-video-row">
+          <div class="table-panel">
+            <span>P3 失败与 P3+ 修复</span>
+            <table class="data-table">
+              <thead>
+                <tr><th>ckpt</th><th>改动</th><th>总分</th><th>forward</th><th>time</th><th>pose</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>P2-4000</td><td>基线</td><td>65.78</td><td>85.38</td><td>25.92</td><td>62.74</td></tr>
+                <tr class="danger"><td>P3-5000</td><td>过载</td><td>57.26</td><td>74.79</td><td>26.52</td><td>48.46</td></tr>
+                <tr class="danger"><td>P3-7000</td><td>过载</td><td>23.61</td><td>13.84</td><td>0</td><td>31.03</td></tr>
+                <tr class="chosen"><td>P3+-5000</td><td>只加全难</td><td>70.10</td><td>89.97</td><td>38.87</td><td>63.70</td></tr>
+              </tbody>
+            </table>
           </div>
-          <div class="lesson-card warning">
-            <span>答辩可以强调</span>
-            <h3>我们不是调参撞运气，而是在用失败做因果切分。</h3>
-            <p>这也是为什么 track 阶段没有继续堆 reward，而是拆成 goal obs、导航接口、高难暴露、低 lr consolidation。</p>
+          <div class="video-slot compact">
+            <span>视频/GIF 槽</span>
+            <b>P3 过载崩盘 vs P3+ 单变量恢复</b>
           </div>
         </div>
       </section>

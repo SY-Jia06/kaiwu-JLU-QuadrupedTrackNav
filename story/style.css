@@ -612,8 +612,14 @@ figcaption {
   background: var(--green-soft);
 }
 
+.flow-card.danger {
+  border-color: #ecc0a2;
+  background: var(--orange-soft);
+}
+
 .flow-card span,
-.evidence-row span {
+.evidence-row span,
+.table-panel span {
   display: block;
   color: var(--muted);
   font-size: 13px;
@@ -628,6 +634,10 @@ figcaption {
 
 .flow-card.selected h3 {
   color: var(--green);
+}
+
+.flow-card.danger h3 {
+  color: #8a431f;
 }
 
 .flow-card p {
@@ -688,6 +698,69 @@ figcaption {
   line-height: 1.4;
 }
 
+.compact-flow {
+  margin-top: 24px;
+}
+
+.compact-flow .flow-card {
+  min-height: 188px;
+}
+
+.data-video-row {
+  display: grid;
+  grid-template-columns: minmax(620px, 1fr) minmax(280px, 0.45fr);
+  gap: 16px;
+  align-items: stretch;
+  margin-top: 22px;
+}
+
+.table-panel {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.data-table {
+  width: 100%;
+  margin-top: 10px;
+  border-collapse: collapse;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.data-table th,
+.data-table td {
+  padding: 8px 9px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.data-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 850;
+}
+
+.data-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.data-table .chosen td {
+  background: var(--green-soft);
+  color: #173f33;
+  font-weight: 850;
+}
+
+.data-table .danger td {
+  background: var(--red-soft);
+  color: #7a2f1b;
+}
+
 .logic-list,
 .timeline {
   display: grid;
@@ -737,6 +810,11 @@ figcaption {
 .video-slot.wide {
   margin-top: 28px;
   max-width: 760px;
+}
+
+.video-slot.compact {
+  min-height: 0;
+  margin-top: 0;
 }
 
 .video-slot span {
@@ -1024,7 +1102,8 @@ figcaption {
   .scaling-note,
   .reframe-grid,
   .curriculum-flow,
-  .evidence-row {
+  .evidence-row,
+  .data-video-row {
     grid-template-columns: 1fr;
   }
 
