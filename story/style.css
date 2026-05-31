@@ -590,24 +590,10 @@ figcaption {
 }
 
 .sweep-table td.max,
-.data-table td.max {
+.data-table td.max,
+.data-table td.emphasis {
   color: #111827;
   font-weight: 950;
-}
-
-.cell-badge {
-  display: inline-grid;
-  place-items: center;
-  margin-left: 6px;
-  padding: 2px 5px;
-  border: 1px solid #9bd0bb;
-  border-radius: 5px;
-  background: #fff;
-  color: var(--green);
-  font-size: 10px;
-  font-weight: 900;
-  line-height: 1;
-  vertical-align: 1px;
 }
 
 .sweep-table .chosen td:first-child {
