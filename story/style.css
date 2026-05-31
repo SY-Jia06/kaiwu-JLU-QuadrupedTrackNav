@@ -587,6 +587,15 @@ figcaption {
 
 .sweep-table .chosen td {
   background: var(--green-soft);
+}
+
+.sweep-table td.max,
+.data-table td.max {
+  color: #111827;
+  font-weight: 950;
+}
+
+.sweep-table .chosen td:first-child {
   color: #173f33;
   font-weight: 850;
 }
@@ -752,6 +761,9 @@ figcaption {
 
 .data-table .chosen td {
   background: var(--green-soft);
+}
+
+.data-table .chosen td:first-child {
   color: #173f33;
   font-weight: 850;
 }
