@@ -216,7 +216,9 @@ h3 {
 
 .plain-thesis.slide-intro {
   max-width: 1120px;
-  font-size: 20px;
+  margin-top: 18px;
+  font-size: 19px;
+  line-height: 1.45;
 }
 
 .reframe-grid {
@@ -606,12 +608,12 @@ figcaption {
   grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr;
   gap: 10px;
   align-items: stretch;
-  margin-top: 30px;
+  margin-top: 22px;
 }
 
 .flow-card {
-  min-height: 230px;
-  padding: 18px;
+  min-height: 205px;
+  padding: 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: var(--panel-soft);
@@ -637,7 +639,7 @@ figcaption {
 }
 
 .flow-card h3 {
-  margin-top: 12px;
+  margin-top: 10px;
   color: var(--blue);
   font-size: 22px;
 }
@@ -651,15 +653,15 @@ figcaption {
 }
 
 .flow-card p {
-  margin-top: 12px;
+  margin-top: 10px;
   color: #455162;
   font-size: 15px;
-  line-height: 1.48;
+  line-height: 1.42;
 }
 
 .flow-card b {
   display: block;
-  margin-top: 14px;
+  margin-top: 12px;
   color: #213044;
   font-size: 17px;
   line-height: 1.25;
@@ -721,11 +723,11 @@ figcaption {
   grid-template-columns: minmax(620px, 1fr) minmax(280px, 0.45fr);
   gap: 16px;
   align-items: stretch;
-  margin-top: 22px;
+  margin-top: 16px;
 }
 
 .table-panel {
-  padding: 16px;
+  padding: 14px 16px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
@@ -733,7 +735,7 @@ figcaption {
 
 .data-table {
   width: 100%;
-  margin-top: 10px;
+  margin-top: 8px;
   border-collapse: collapse;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -744,7 +746,7 @@ figcaption {
 
 .data-table th,
 .data-table td {
-  padding: 8px 9px;
+  padding: 7px 9px;
   border-bottom: 1px solid var(--line);
   text-align: left;
   vertical-align: top;
