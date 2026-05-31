@@ -379,6 +379,19 @@ figcaption {
   line-height: 1.45;
 }
 
+.figure-stack {
+  display: grid;
+  gap: 16px;
+}
+
+.figure-stack figure img {
+  max-height: 275px;
+}
+
+.figure-stack figcaption {
+  margin-top: 7px;
+}
+
 .standard-overview .wide-figure {
   margin-top: 26px;
 }

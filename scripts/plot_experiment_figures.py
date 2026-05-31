@@ -418,6 +418,66 @@ def plot_track_progression():
     axes[1].text(3.55, 0.08, "评测口径切换", fontsize=11, color="#555555")
     save(fig, "track_progression_curve.png")
 
+    early = data[data["评测口径"] == "早期 track [0,1,3,4]"].copy()
+    final = data[data["评测口径"] == "决赛 track [0-9]"].copy()
+
+    def plot_split_track(df, title, note, name, color):
+        fig, ax = plt.subplots(figsize=(12, 4.2))
+        ax2 = ax.twinx()
+
+        sns.lineplot(
+            data=df,
+            x="检查点",
+            y="总分",
+            marker="o",
+            linewidth=3.0,
+            markersize=9,
+            color=color,
+            ax=ax,
+        )
+        sns.lineplot(
+            data=df,
+            x="检查点",
+            y="完成率",
+            marker="s",
+            linewidth=2.5,
+            markersize=8,
+            color="#2E7D6B",
+            ax=ax2,
+        )
+
+        ax.set_title(title)
+        ax.set_ylabel("总分")
+        ax2.set_ylabel("完成率")
+        ax2.set_ylim(0, 1.02)
+        ax.set_xlabel("")
+        ax.tick_params(axis="x", rotation=18)
+        ax.text(
+            0.02,
+            0.92,
+            note,
+            transform=ax.transAxes,
+            fontsize=11,
+            color="#374151",
+            bbox=dict(boxstyle="round,pad=0.35", facecolor="#F7F9FB", edgecolor="#D9DEE6"),
+        )
+        save(fig, name)
+
+    plot_split_track(
+        early,
+        "早期 track：从 goal obs 到 command 槽导航",
+        "同一早期 track 口径：[0,1,3,4]",
+        "track_early_progression_curve.png",
+        "#2F6DA3",
+    )
+    plot_split_track(
+        final,
+        "决赛 track：从高难暴露到全量巩固",
+        "决赛口径：[0,1,3,4,5,6,7,8,9]",
+        "track_final_progression_curve.png",
+        "#8A5A44",
+    )
+
 
 def main():
     setup_style()
