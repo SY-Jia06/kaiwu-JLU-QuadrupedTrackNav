@@ -362,36 +362,58 @@
 
       <section class="slide" id="s09">
         <div class="slide-number">09</div>
-        <h2>关键接口：waypoint → command 槽</h2>
-        <div class="diagram-row">
-          <div class="diagram-card">
-            <h3>final goal</h3>
-            <p>赛道终点很远，直接盯终点容易斜上台阶、撞墙或在迷宫里绕远。</p>
-          </div>
-          <div class="arrow">→</div>
-          <div class="diagram-card selected">
+        <h2>关键接口：把导航域翻译成 policy 听得懂的 obs</h2>
+        <p class="plain-thesis slide-intro">
+          Track 不是让神经网络从零学“怎么选路”。我们把目标、局部地形和 waypoint 先变成 nav command，
+          再写进旧 locomotion policy 已经熟悉的 command 槽。
+        </p>
+        <div class="network-architecture">
+          <div class="domain-tag nav">导航域：目标 / 地形 / waypoint</div>
+          <div class="domain-tag policy">运动控制域：obs / policy / action</div>
+
+          <article class="arch-box nav-source">
+            <span>输入</span>
+            <h3>final goal + 局部扫描</h3>
+            <p>终点很远，直接盯终点容易斜上台阶、撞墙，或者在 maze 里绕远。</p>
+          </article>
+          <div class="arch-arrow arrow-a">→</div>
+          <article class="arch-box rule-box">
+            <span>规则层</span>
             <h3>local waypoint</h3>
-            <p>每一小段先选择局部目标点：前方、左前或右前。</p>
-          </div>
-          <div class="arrow">→</div>
-          <div class="diagram-card selected">
-            <h3>vx / vy / wz</h3>
-            <p>把局部目标转换成速度和转向 command。</p>
-          </div>
-          <div class="arrow">→</div>
-          <div class="diagram-card">
-            <h3>obs[6:9]</h3>
-            <p>写回旧 policy 熟悉的 command 槽，让 PPO 继续负责 gait。</p>
-          </div>
+            <p>每一小段先选局部目标点，再转成 vx / vy / wz。</p>
+          </article>
+          <div class="arch-arrow arrow-b">写入</div>
+          <article class="obs-box">
+            <span>蓝色框：policy 输入</span>
+            <h3>obs = 305 维</h3>
+            <div class="obs-grid">
+              <div>proprio<br /><b>45</b></div>
+              <div>height scan<br /><b>256</b></div>
+              <div>goal obs<br /><b>4</b></div>
+              <div class="command-slot">obs[6:9]<br /><b>vx / vy / wz</b></div>
+            </div>
+          </article>
+          <div class="arch-arrow arrow-c">→</div>
+          <article class="arch-box policy-box">
+            <span>神经网络</span>
+            <h3>Policy πθ</h3>
+            <p>复用 standard locomotion 学到的 gait，只需要按 command 执行。</p>
+          </article>
+          <div class="arch-arrow arrow-d">→</div>
+          <article class="arch-box action-box">
+            <span>输出</span>
+            <h3>12 维关节 action</h3>
+            <p>底层继续负责站稳、摆腿、过坡和过台阶。</p>
+          </article>
         </div>
-        <div class="two-column-note">
+        <div class="architecture-notes">
           <article>
             <h3>为什么不是只靠 reward？</h3>
-            <p>路径选择属于高层结构约束，稀疏或错位 reward 很容易让训练曲线和平台分数脱钩。</p>
+            <p>路径选择是高层结构问题，稀疏或错位 reward 很容易让训练 reward 和平台 score 脱钩。</p>
           </article>
           <article>
-            <h3>为什么这个接口有效？</h3>
-            <p>导航方向由规则层给出，底层 policy 不需要重新发明走路，只要用已有 locomotion 能力执行 command。</p>
+            <h3>迁移怎么保住？</h3>
+            <p>旧 checkpoint 精确加载原输入权重；新增 goal 输入列从零开始，避免一开始破坏 gait。</p>
           </article>
         </div>
       </section>
