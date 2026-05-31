@@ -56,22 +56,29 @@
 
       <section class="slide" id="s02">
         <div class="slide-number">02</div>
-        <h2>问题重定义：standard locomotion 不等于 track navigation</h2>
-        <div class="three-layers">
+        <h2>核心转折：会走，不等于会自己找路</h2>
+        <p class="plain-thesis">
+          standard 更像“按给定速度命令把身体控制好”；track 更像“在坡、台阶、墙和迷宫里自己决定下一步往哪走”。
+          所以我们不是把一个会走的 policy 直接搬过去，而是把问题重新拆成三问。
+        </p>
+        <div class="reframe-grid">
           <article>
-            <h3>一层：调整步态</h3>
-            <p>先解决“站稳但不走”：用 command 让 policy 产生真实前进，再用地形课程扩展 gait。</p>
+            <span>standard locomotion</span>
+            <h3>按命令走</h3>
+            <p>输入主要是速度命令和地形扫描；目标是稳定执行 vx/vy/wz，不摔、少耗能、走得远。</p>
           </article>
-          <article>
-            <h3>二层：学会导航</h3>
-            <p>会走后仍可能不会选路：用 goal obs 跑通迁移，再把 waypoint 转成旧 policy 熟悉的 command 槽。</p>
-          </article>
-          <article>
-            <h3>三层：分布鲁棒</h3>
-            <p>决赛不是单点最优：在 level5、level8、level9 的 trade-off 中选择全局均衡点。</p>
+          <article class="selected">
+            <span>track navigation</span>
+            <h3>自己选路走</h3>
+            <p>输入还必须包含目标和局部障碍；目标是边走边转、避墙、过台阶、走出 maze。</p>
           </article>
         </div>
-        <p class="speaker-note">主句：决赛不是把 standard policy 原样搬过去，而是步态、导航、分布三件事同时成立。</p>
+        <div class="three-questions">
+          <div><b>1. 先会走</b><span>command 课程 + terrain curriculum，把“站稳但不走”变成可迁移 gait。</span></div>
+          <div><b>2. 再会找路</b><span>goal obs + waypoint，把导航意图翻译成旧 policy 听得懂的 command 槽。</span></div>
+          <div><b>3. 最后全分布稳</b><span>P8/P9 调整训练分布，在 level5/8/9 的 trade-off 中选均衡 checkpoint。</span></div>
+        </div>
+        <p class="speaker-note">主句：标准赛考“身体控制”，决赛考“身体控制 + 路径选择 + 分布稳定”。</p>
       </section>
 
       <section class="slide image-slide standard-overview" id="s03">
