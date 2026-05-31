@@ -55,12 +55,12 @@ body {
 
 .topbar nav {
   display: flex;
-  gap: 8px;
+  gap: 6px;
 }
 
 .topbar a {
   display: grid;
-  width: 34px;
+  width: 32px;
   height: 28px;
   place-items: center;
   border: 1px solid var(--line);
@@ -290,6 +290,100 @@ figcaption {
   line-height: 1.45;
 }
 
+.standard-overview .wide-figure {
+  margin-top: 26px;
+}
+
+.standard-overview .wide-figure img {
+  max-height: 440px;
+}
+
+.scaling-note {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 18px;
+}
+
+.scaling-note div {
+  min-height: 104px;
+  padding: 18px 20px;
+  border: 1px solid #b8d7c8;
+  border-radius: 8px;
+  background: var(--green-soft);
+}
+
+.scaling-note b,
+.lesson-card span {
+  display: block;
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.scaling-note span {
+  display: block;
+  margin-top: 8px;
+  color: #334155;
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.lesson-layout {
+  display: grid;
+  grid-template-columns: minmax(520px, 1.15fr) minmax(360px, 0.85fr);
+  gap: 32px;
+  align-items: start;
+  margin-top: 28px;
+}
+
+.lesson-card {
+  min-height: 320px;
+  padding: 26px;
+  border: 1px solid #b8d7c8;
+  border-radius: 8px;
+  background: var(--green-soft);
+}
+
+.lesson-card h3 {
+  margin-top: 18px;
+  color: #173f33;
+  font-size: 27px;
+  line-height: 1.25;
+}
+
+.lesson-card p {
+  margin-top: 18px;
+  color: #2f4a42;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.lesson-card.metric-focus {
+  background: #fff;
+  border-color: var(--line);
+}
+
+.lesson-card.metric-focus h3 {
+  color: var(--blue);
+}
+
+.lesson-card.metric-focus p b {
+  color: var(--green);
+  font-size: 42px;
+  line-height: 1;
+}
+
+.lesson-card.warning {
+  border-color: #ecc0a2;
+  background: var(--orange-soft);
+}
+
+.lesson-card.warning span,
+.lesson-card.warning h3 {
+  color: #8a431f;
+}
+
 .logic-list,
 .timeline {
   display: grid;
@@ -334,6 +428,11 @@ figcaption {
   border: 1px dashed #aab4c2;
   border-radius: 8px;
   background: #f8fafc;
+}
+
+.video-slot.wide {
+  margin-top: 28px;
+  max-width: 760px;
 }
 
 .video-slot span {
@@ -615,7 +714,9 @@ figcaption {
     grid-template-columns: 1fr 1fr;
   }
 
-  .split {
+  .split,
+  .lesson-layout,
+  .scaling-note {
     grid-template-columns: 1fr;
   }
 
