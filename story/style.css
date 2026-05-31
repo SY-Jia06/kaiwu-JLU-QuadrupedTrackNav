@@ -374,6 +374,10 @@ figcaption {
   line-height: 1;
 }
 
+.lesson-card.terrain-card h3 {
+  font-size: 24px;
+}
+
 .lesson-card.warning {
   border-color: #ecc0a2;
   background: var(--orange-soft);
@@ -421,6 +425,42 @@ figcaption {
 }
 
 .command-table .chosen td {
+  background: var(--green-soft);
+}
+
+.terrain-table {
+  width: 100%;
+  margin-top: 18px;
+  border-collapse: collapse;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.terrain-table th,
+.terrain-table td {
+  padding: 11px 12px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.terrain-table th {
+  width: 82px;
+  color: var(--green);
+  font-weight: 850;
+}
+
+.terrain-table tr:last-child th,
+.terrain-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.terrain-table .chosen th,
+.terrain-table .chosen td {
   background: var(--green-soft);
 }
 

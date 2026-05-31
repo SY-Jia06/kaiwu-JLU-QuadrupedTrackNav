@@ -160,11 +160,25 @@
               <div><b>约束</b><span>每次只把一个主变量传下去，避免 reward、command、terrain 同时改变后无法归因。</span></div>
             </div>
           </div>
-          <div class="lesson-card metric-focus">
-            <span>数据读法</span>
-            <h3>P1-2500 → P2-4000</h3>
-            <p><b>57.86 → 65.78</b></p>
-            <p>这个提升说明地形课程确实在扩展 gait，而不是只让机器人更会站。</p>
+          <div class="lesson-card metric-focus terrain-card">
+            <span>课程怎么加</span>
+            <h3>不是换目标，而是扩大训练分布</h3>
+            <table class="terrain-table">
+              <tbody>
+                <tr>
+                  <th>P1 低难</th>
+                  <td>difficulty [0, 0.3]；max level 0；坡/反坡 0.8，台阶 0.2；关闭域随机化。</td>
+                </tr>
+                <tr>
+                  <th>P2 迁移</th>
+                  <td>difficulty [0, 0.6]；max level 3；坡/反坡 0.4，台阶/反台阶 0.6；开启摩擦随机化。</td>
+                </tr>
+                <tr class="chosen">
+                  <th>证据</th>
+                  <td>stairs_inv 从 forward/time 26.46/0 打开到 65.35/12.43。</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
