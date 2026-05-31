@@ -104,9 +104,34 @@
             </p>
             <div class="logic-list">
               <div><b>失败现象</b><span>机器人能站稳，动作也省，但不会产生有效前进。</span></div>
-              <div><b>课程处理</b><span>先给非零前进 command，侧向和 yaw 先关掉，迫使 policy 学会前进 gait。</span></div>
               <div><b>判断标准</b><span>看 forward/time 是否真正上来，而不是只看姿态和能耗分。</span></div>
             </div>
+            <table class="command-table">
+              <thead>
+                <tr>
+                  <th>阶段</th>
+                  <th>训练 command 数值</th>
+                  <th>评测信号</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>E1 对照</td>
+                  <td>无训练 command；评测时 action=0</td>
+                  <td>forward 8.32，time 0</td>
+                </tr>
+                <tr class="chosen">
+                  <td>E3</td>
+                  <td>vx [0.5, 1.0]，vy 0，wz 0；resample [4, 6]s</td>
+                  <td>forward 60.58，time 21.56</td>
+                </tr>
+                <tr>
+                  <td>E6-P1</td>
+                  <td>vx [0.3, 0.8]，vy [0, 0]，wz [0, 0]；resample [8, 12]s</td>
+                  <td>P1-2500 总分 57.86，进入 P2</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
           <div class="lesson-card">
             <span>Command 课程的边界</span>
