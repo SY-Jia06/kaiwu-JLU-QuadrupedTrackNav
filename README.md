@@ -22,7 +22,101 @@
 
 ## 现有图表
 
-这些图全部由 `scripts/plot_experiment_figures.py` 从 `EXPERIMENTS.md` 中已经沉淀的关键数值整理而来。它们的作用不是替代完整实验记录，而是先把当前答辩故事线可视化出来。
+这些图全部由 `scripts/plot_experiment_figures.py` 从 `EXPERIMENTS.md` 中已经沉淀的关键数值整理而来。它们的作用不是替代完整实验记录，而是先把当前实验路径可视化出来。
+
+### Checkpoint 选择树
+
+这棵树只回答一个问题：每个阶段扫了多个 checkpoint 之后，最后选谁作为下一阶段起点。绿色节点是被继承的主线，橙色节点是局部更强但不适合继续继承的反例，灰色节点是评测后淘汰的点。
+
+```mermaid
+flowchart LR
+  classDef selected fill:#EAF6EF,stroke:#2E7D6B,stroke-width:2px,color:#12382F;
+  classDef warning fill:#FFF1E8,stroke:#C56A3D,stroke-width:1.5px,color:#6F3520;
+  classDef rejected fill:#F1F2F4,stroke:#B8BFC7,stroke-width:1px,color:#6B7280;
+  classDef candidate fill:#F7F8FA,stroke:#7A8795,stroke-width:1px,color:#29323A;
+
+  subgraph S1["P1 低难步态：选稳定 gait"]
+    P1_500["P1-500<br/>27.94，不选"]:::rejected
+    P1_1000["P1-1000<br/>54.08，备选"]:::candidate
+    P1_1500["P1-1500<br/>55.90，偏激进"]:::candidate
+    P1_2000["P1-2000<br/>57.30，稳健备选"]:::candidate
+    P1_2500["P1-2500<br/>57.86，选入 P2"]:::selected
+  end
+
+  subgraph S2["P2 地形课程：坡/台阶扩展"]
+    P2_3000["P2-3000<br/>61.38，继续扫"]:::candidate
+    P2_3500["P2-3500<br/>65.12，备选"]:::candidate
+    P2_4000["P2-4000<br/>65.78，选入 P3"]:::selected
+    P2_4500["P2-4500<br/>64.94，姿态代价"]:::warning
+  end
+
+  subgraph S3["P3 拆变量：过载失败后回退"]
+    P3_5000["P3-5000<br/>57.26，过载下滑"]:::warning
+    P3_6000["P3-6000<br/>48.38，不选"]:::rejected
+    P3_7000["P3-7000<br/>23.61，崩掉"]:::rejected
+    P3p_4500["P3+-4500<br/>69.94，备选"]:::candidate
+    P3p_5000["P3+-5000<br/>70.10，选入 P4"]:::selected
+    P3p_7000["P3+-7000<br/>69.75，激进备选"]:::candidate
+  end
+
+  subgraph S4["P4/P5：5D standard 基础能力"]
+    P4_5500["P4-maze-5500<br/>70.91，备选"]:::candidate
+    P4_6500["P4-maze-6500<br/>70.95，5D 候选"]:::candidate
+    P4_12000["P4-maze-12000<br/>70.55，长训无增益"]:::warning
+    P5_7000["P5-light-7000<br/>69.48，偏早"]:::rejected
+    P5_10500["P5-light-10500<br/>72.24，选入 track"]:::selected
+    P5_11000["P5-light-11000<br/>69.89，回落"]:::warning
+  end
+
+  subgraph S5["P6.1/P6.2：goal obs + 导航 reward"]
+    P61_500["P6.1-500<br/>0.04/0，接口基线"]:::rejected
+    P62_10700["P6.2-10700<br/>19.02/0.34"]:::candidate
+    P62_10900["P6.2-10900<br/>约40/0.70"]:::candidate
+    P62_11100["P6.2-11100<br/>43.85/0.76，选入 P6.4"]:::selected
+    P62_11700["P6.2-11700<br/>21.81/0.38，长训退化"]:::warning
+  end
+
+  subgraph S6["P6.4：waypoint 写入 command 槽"]
+    P64_11200["P6.4-11200<br/>48.07/0.83"]:::candidate
+    P64_11300["P6.4-11300<br/>53.64/0.91，选入 P7"]:::selected
+    P64_11400["P6.4-11400<br/>48.57/0.81，level1 退化"]:::warning
+    P64_11500["P6.4-11500<br/>42.11/0.72，不选"]:::rejected
+    P64_11800["P6.4-11800<br/>44.17/0.75，level1 崩"]:::warning
+  end
+
+  subgraph S7["P7：高难窗口与局部 waypoint"]
+    P70_11600["P7-0-11600<br/>47.05/0.90，均衡候选"]:::candidate
+    P70_11800["P7-0-11800<br/>46.80/0.88，level7 强但伤 level5"]:::warning
+    P71_11650["P7.1-11650<br/>51.13/0.96，50 局 SOTA"]:::candidate
+    P72_11680["P7.2-11680<br/>48.02，低 lr 不成立"]:::warning
+    P73_11750["P7.3-11750<br/>41.84/0.75，选入 P8"]:::selected
+  end
+
+  subgraph S8["P8：level8/9 rescue"]
+    P8A_11890["P8-A-11890<br/>42.27/0.76，高难抬头"]:::candidate
+    P8A_11930["P8-A-11930<br/>42.71/0.78，选入 P8-B"]:::candidate
+    P8B_12000["P8-1_12000<br/>47.51/0.87，选入 P9"]:::selected
+  end
+
+  subgraph S9["P9：全量低 lr 巩固"]
+    P9_12150["Plast_12150<br/>48.10/0.88，当前选择"]:::selected
+    P9_12200["Plast_12200<br/>45.55/0.84，过训反例"]:::warning
+  end
+
+  P1_2500 ==> P2_4000
+  P2_4000 -. 过载路线失败 .-> P3_5000
+  P2_4000 ==> P3p_5000
+  P3p_5000 ==> P5_10500
+  P5_10500 ==> P62_11100
+  P62_11100 ==> P64_11300
+  P64_11300 ==> P73_11750
+  P71_11650 -. 低 lr 分支失败 .-> P72_11680
+  P71_11650 -. waypoint 修正 .-> P73_11750
+  P73_11750 ==> P8A_11930
+  P8A_11930 ==> P8B_12000
+  P8B_12000 ==> P9_12150
+  P9_12150 -. 继续长训 .-> P9_12200
+```
 
 ![课程与模式选择数据曲线](assets/figures/curriculum_modes_data_curve.png)
 
