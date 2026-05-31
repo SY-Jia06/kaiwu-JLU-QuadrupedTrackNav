@@ -214,6 +214,11 @@ h3 {
   font-weight: 680;
 }
 
+.plain-thesis.slide-intro {
+  max-width: 1120px;
+  font-size: 20px;
+}
+
 .reframe-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -586,6 +591,103 @@ figcaption {
   font-weight: 850;
 }
 
+.curriculum-flow {
+  display: grid;
+  grid-template-columns: 1fr 36px 1fr 36px 1fr 36px 1fr;
+  gap: 10px;
+  align-items: stretch;
+  margin-top: 30px;
+}
+
+.flow-card {
+  min-height: 230px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--panel-soft);
+}
+
+.flow-card.selected {
+  border-color: #9bd0bb;
+  background: var(--green-soft);
+}
+
+.flow-card span,
+.evidence-row span {
+  display: block;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.flow-card h3 {
+  margin-top: 12px;
+  color: var(--blue);
+  font-size: 22px;
+}
+
+.flow-card.selected h3 {
+  color: var(--green);
+}
+
+.flow-card p {
+  margin-top: 12px;
+  color: #455162;
+  font-size: 15px;
+  line-height: 1.48;
+}
+
+.flow-card b {
+  display: block;
+  margin-top: 14px;
+  color: #213044;
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+.flow-arrow {
+  display: grid;
+  place-items: center;
+  color: var(--green);
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.evidence-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 22px;
+}
+
+.evidence-row article {
+  min-height: 128px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+}
+
+.evidence-row article.selected {
+  border-color: #9bd0bb;
+  background: var(--green-soft);
+}
+
+.evidence-row b {
+  display: block;
+  margin-top: 8px;
+  color: var(--green);
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.evidence-row p {
+  margin-top: 8px;
+  color: #455162;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
 .logic-list,
 .timeline {
   display: grid;
@@ -920,8 +1022,15 @@ figcaption {
   .split,
   .lesson-layout,
   .scaling-note,
-  .reframe-grid {
+  .reframe-grid,
+  .curriculum-flow,
+  .evidence-row {
     grid-template-columns: 1fr;
+  }
+
+  .flow-arrow {
+    height: 24px;
+    transform: rotate(90deg);
   }
 
   figure img {

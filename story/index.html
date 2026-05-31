@@ -165,39 +165,55 @@
 
       <section class="slide" id="s05">
         <div class="slide-number">05</div>
-        <h2>第二节课：terrain curriculum 扩展 gait 的适用范围</h2>
-        <div class="lesson-layout">
-          <div>
-            <p class="claim small">
-              command 让机器人开始走，terrain curriculum 让这套 gait 从平地迁移到坡、反坡、台阶、反台阶和 maze。
-              这一步的重点不是刷单个地形峰值，而是让可迁移能力变宽。
-            </p>
-            <div class="logic-list">
-              <div><b>P1</b><span>低难度步态先稳定，P1-2500 作为进入地形课程的 checkpoint。</span></div>
-              <div><b>P2</b><span>地形课程后 overall 从 57.86 提到 65.78，stairs_inv 的 time/forward 被打开。</span></div>
-              <div><b>约束</b><span>每次只把一个主变量传下去，避免 reward、command、terrain 同时改变后无法归因。</span></div>
-            </div>
-          </div>
-          <div class="lesson-card metric-focus terrain-card">
-            <span>课程怎么加</span>
-            <h3>不是换目标，而是扩大训练分布</h3>
-            <table class="terrain-table">
-              <tbody>
-                <tr>
-                  <th>P1 低难</th>
-                  <td>difficulty [0, 0.3]；max level 0；坡/反坡 0.8，台阶 0.2；关闭域随机化。</td>
-                </tr>
-                <tr>
-                  <th>P2 迁移</th>
-                  <td>difficulty [0, 0.6]；max level 3；坡/反坡 0.4，台阶/反台阶 0.6；开启摩擦随机化。</td>
-                </tr>
-                <tr class="chosen">
-                  <th>证据</th>
-                  <td>stairs_inv 从 forward/time 26.46/0 打开到 65.35/12.43。</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+        <h2>第二节课：P2 把直行 gait 迁移到坡和台阶</h2>
+        <p class="plain-thesis slide-intro">
+          P1 已经能向前走，但反台阶仍是 time=0。P2 不换模型、不换目标，只扩大地形训练分布并开启摩擦随机化，看 gait 能不能迁移到更复杂地形。
+        </p>
+        <div class="curriculum-flow">
+          <article class="flow-card">
+            <span>起点</span>
+            <h3>P1-2500</h3>
+            <p>低难直行 gait 已形成，但反台阶还没有真正通过。</p>
+            <b>stairs_inv 26.46 / 0</b>
+          </article>
+          <div class="flow-arrow">→</div>
+          <article class="flow-card selected">
+            <span>做法</span>
+            <h3>P2 curriculum</h3>
+            <p>difficulty [0, 0.6]，max level 3；坡/反坡 0.4，台阶/反台阶 0.6。</p>
+            <b>开启摩擦随机化</b>
+          </article>
+          <div class="flow-arrow">→</div>
+          <article class="flow-card">
+            <span>扫点</span>
+            <h3>3000 → 4500</h3>
+            <p>约 24 分钟到 91 分钟之间密集看 checkpoint。</p>
+            <b>不看单点峰值</b>
+          </article>
+          <div class="flow-arrow">→</div>
+          <article class="flow-card selected">
+            <span>选择</span>
+            <h3>P2-4000</h3>
+            <p>总分最高，forward 和能耗最好；4500 虽更激进，但姿态代价明显。</p>
+            <b>65.78 overall</b>
+          </article>
+        </div>
+        <div class="evidence-row">
+          <article>
+            <span>问题</span>
+            <b>反台阶 time 仍为 0</b>
+            <p>P1 会向前走，但还没把 gait 迁移到最难的 standard 地形。</p>
+          </article>
+          <article class="selected">
+            <span>结果</span>
+            <b>stairs_inv 26.46/0 → 65.35/12.43</b>
+            <p>time 被打开，说明不是“更会站”，而是困难地形推进能力出现了。</p>
+          </article>
+          <article>
+            <span>原则</span>
+            <b>只改地形分布</b>
+            <p>这一页只解释 P2：不混 reward、不混 track、不混导航算法。</p>
+          </article>
         </div>
       </section>
 
