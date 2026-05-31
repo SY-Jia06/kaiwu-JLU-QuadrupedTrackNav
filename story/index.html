@@ -102,53 +102,64 @@
 
       <section class="slide" id="s04">
         <div class="slide-number">04</div>
-        <h2>第一节课：command 先让它真的动起来</h2>
+        <h2>第一节课：P1 固定直行命令，先让 gait 长出来</h2>
         <div class="lesson-layout">
           <div>
             <p class="claim small">
-              早期模型可以靠站稳、低动作拿姿态和能耗分，但 forward/time 不上去。
-              command 课程的作用，是先打破“不走”的局部最优，而不是一开始就追求全方向泛化。
+              正式主线从 P1 开始，不把早期探索当作主叙事。
+              P1 的控制变量是：从零训练、低难地形、forward-only command，先得到干净可迁移的基础步态。
             </p>
             <div class="logic-list">
-              <div><b>失败现象</b><span>机器人能站稳，动作也省，但不会产生有效前进。</span></div>
-              <div><b>判断标准</b><span>看 forward/time 是否真正上来，而不是只看姿态和能耗分。</span></div>
+              <div><b>训练目标</b><span>先学“稳定向前走”，不在第一步同时学习侧移、原地转向和高难避障。</span></div>
+              <div><b>选择方式</b><span>用平台 eval 扫 500/1000/1500/2000/2500，而不是只看训练 reward。</span></div>
             </div>
             <table class="command-table">
               <thead>
                 <tr>
-                  <th>阶段</th>
-                  <th>训练 command 数值</th>
-                  <th>评测信号</th>
+                  <th>配置项</th>
+                  <th>P1 数值</th>
+                  <th>目的</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>E1 对照</td>
-                  <td>无训练 command；评测时 action=0</td>
-                  <td>forward 8.32，time 0</td>
+                  <td>command</td>
+                  <td>vx [0.3, 0.8]；vy [0, 0]；wz [0, 0]；resample [8, 12]s</td>
+                  <td>强制形成 forward gait</td>
                 </tr>
                 <tr class="chosen">
-                  <td>E3</td>
-                  <td>vx [0.5, 1.0]，vy 0，wz 0；resample [4, 6]s</td>
-                  <td>forward 60.58，time 21.56</td>
+                  <td>terrain</td>
+                  <td>difficulty [0, 0.3]；max level 0；坡/反坡 0.8，台阶 0.2</td>
+                  <td>先降低地形干扰</td>
                 </tr>
                 <tr>
-                  <td>E6-P1</td>
-                  <td>vx [0.3, 0.8]，vy [0, 0]，wz [0, 0]；resample [8, 12]s</td>
-                  <td>P1-2500 总分 57.86，进入 P2</td>
+                  <td>随机化</td>
+                  <td>domain randomization 关闭；noise 关闭</td>
+                  <td>减少冷启动噪声</td>
                 </tr>
               </tbody>
             </table>
           </div>
-          <div class="lesson-card">
-            <span>Command 课程的边界</span>
-            <h3>它解决“要不要走”，不解决“在哪里走”。</h3>
-            <p>所以它不应该被解释成对某个地形的特化。我们先把底层步态从站立局部最优里拉出来，再进入 terrain curriculum。</p>
+          <div class="lesson-card p-sweep-card">
+            <span>P1 checkpoint sweep</span>
+            <h3>选 P1-2500，不是选 forward 最大点</h3>
+            <table class="sweep-table">
+              <thead>
+                <tr><th>ckpt</th><th>总分</th><th>forward</th><th>time</th></tr>
+              </thead>
+              <tbody>
+                <tr><td>500</td><td>27.94</td><td>13.00</td><td>0</td></tr>
+                <tr><td>1000</td><td>54.08</td><td>61.31</td><td>22.27</td></tr>
+                <tr><td>2000</td><td>57.30</td><td>67.92</td><td>29.53</td></tr>
+                <tr class="chosen"><td>2500</td><td>57.86</td><td>68.68</td><td>16.59</td></tr>
+              </tbody>
+            </table>
+            <p>2500 的总分、姿态和能耗更稳，适合作为进入 P2 的基础 gait。</p>
           </div>
         </div>
         <div class="video-slot wide">
           <span>视频/GIF 槽</span>
-          <b>早期站稳但不走 → command 课程后形成有效 forward gait</b>
+          <b>P1 低难直行 gait 形成：从“不稳定推进”到可进入地形课程</b>
         </div>
       </section>
 

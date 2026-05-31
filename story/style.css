@@ -460,6 +460,10 @@ figcaption {
   font-size: 24px;
 }
 
+.lesson-card.p-sweep-card h3 {
+  font-size: 23px;
+}
+
 .lesson-card.warning {
   border-color: #ecc0a2;
   background: var(--orange-soft);
@@ -544,6 +548,42 @@ figcaption {
 .terrain-table .chosen th,
 .terrain-table .chosen td {
   background: var(--green-soft);
+}
+
+.sweep-table {
+  width: 100%;
+  margin-top: 16px;
+  border-collapse: collapse;
+  overflow: hidden;
+  border: 1px solid #b8d7c8;
+  border-radius: 8px;
+  background: #fff;
+  color: #25313f;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.sweep-table th,
+.sweep-table td {
+  padding: 10px 9px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.sweep-table th {
+  background: #f1f5f9;
+  color: #334155;
+  font-weight: 850;
+}
+
+.sweep-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.sweep-table .chosen td {
+  background: var(--green-soft);
+  color: #173f33;
+  font-weight: 850;
 }
 
 .logic-list,
