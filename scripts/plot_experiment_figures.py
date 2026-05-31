@@ -50,6 +50,158 @@ def save(fig, name):
     print(path.relative_to(ROOT))
 
 
+def plot_curriculum_modes_data_curve():
+    """A data-first view of curriculum phases and reward/command navigation modes."""
+    standard = pd.DataFrame(
+        [
+            ("P1-500", "command 引导步态", 1, 27.94, 13.00, 0.00),
+            ("P1-1000", "command 引导步态", 2, 54.08, 61.31, 22.27),
+            ("P1-1500", "command 引导步态", 3, 55.90, 72.91, 26.87),
+            ("P1-2000", "command 引导步态", 4, 57.30, 67.92, 29.53),
+            ("P1-2500", "command 引导步态", 5, 57.86, 68.68, 16.59),
+            ("P2-3000", "地形课程", 6, 61.38, 77.76, 21.98),
+            ("P2-3500", "地形课程", 7, 65.12, 83.26, 29.35),
+            ("P2-4000", "地形课程", 8, 65.78, 85.38, 25.92),
+            ("P2-4500", "地形课程", 9, 64.94, 85.84, 33.32),
+            ("P3-5000", "过载课程反例", 10, 57.26, 74.79, 26.52),
+            ("P3-6000", "过载课程反例", 11, 48.38, 56.55, 12.74),
+            ("P3-7000", "过载课程反例", 12, 23.61, 13.84, 0.00),
+            ("P3+-4500", "单变量全难度", 13, 69.94, 91.45, 39.82),
+            ("P3+-5000", "单变量全难度", 14, 70.10, 89.97, 38.87),
+            ("P3+-6000", "单变量全难度", 15, 69.40, 90.09, 36.61),
+            ("P3+-7000", "单变量全难度", 16, 69.75, 91.17, 44.87),
+        ],
+        columns=["检查点", "阶段", "x", "总分", "前进分", "时间分"],
+    )
+    track = pd.DataFrame(
+        [
+            ("P6.1-500", "reward 模式前", 1, 0.04, 0.00),
+            ("P6.2-10700", "reward 模式", 2, 19.02, 0.34),
+            ("P6.2-11100", "reward 模式", 3, 43.60, 0.75),
+            ("P6.4.1-11300", "command 模式", 4, 53.64, 0.91),
+            ("P7.3-11750", "决赛口径基线", 5, 41.84, 0.75),
+            ("P8-A-11930", "高难暴露", 6, 42.71, 0.79),
+            ("P8-1_12000", "中高难回填", 7, 47.51, 0.87),
+            ("Plast_12150", "全量低 lr 巩固", 8, 48.10, 0.88),
+            ("Plast_12200", "过训反例", 9, 45.55, 0.84),
+        ],
+        columns=["检查点", "阶段", "x", "总分", "完成率"],
+    )
+    levels = pd.DataFrame(
+        [
+            ("P7.3-11750", 1, 50.47, 1.43, 5.59),
+            ("P8-A-11930", 2, 36.53, 12.10, 23.40),
+            ("P8-1_12000", 3, 47.50, 23.36, 34.07),
+            ("Plast_12150", 4, 53.64, 34.27, 25.39),
+            ("Plast_12200", 5, 53.68, 45.20, 29.25),
+        ],
+        columns=["检查点", "x", "level5", "level8", "level9"],
+    )
+
+    fig, axes = plt.subplots(3, 1, figsize=(16, 12), gridspec_kw={"height_ratios": [1.05, 1.05, 0.9]})
+    fig.suptitle("课程与模式选择：现有数据支持的训练路径", fontsize=24, weight="bold", y=0.995)
+
+    # Panel 1: standard locomotion curriculum
+    std_long = standard.melt(
+        id_vars=["检查点", "阶段", "x"],
+        value_vars=["总分", "前进分", "时间分"],
+        var_name="指标",
+        value_name="得分",
+    )
+    sns.lineplot(
+        data=std_long,
+        x="x",
+        y="得分",
+        hue="指标",
+        marker="o",
+        linewidth=2.4,
+        markersize=7,
+        ax=axes[0],
+    )
+    axes[0].axvspan(0.5, 5.5, color="#EAF2FF", alpha=0.65)
+    axes[0].axvspan(5.5, 9.5, color="#EEF8EA", alpha=0.65)
+    axes[0].axvspan(9.5, 12.5, color="#FCE9DF", alpha=0.75)
+    axes[0].axvspan(12.5, 16.5, color="#EEF8EA", alpha=0.40)
+    axes[0].text(3.0, 94, "指令引导步态", ha="center", color="#2E5FA7", fontsize=12, weight="bold")
+    axes[0].text(7.5, 94, "地形课程", ha="center", color="#3A7D44", fontsize=12, weight="bold")
+    axes[0].text(11.0, 94, "过载课程反例", ha="center", color="#A34B32", fontsize=12, weight="bold")
+    axes[0].text(14.5, 94, "单变量全难度", ha="center", color="#3A7D44", fontsize=12, weight="bold")
+    axes[0].set_title("A. 标准步态阶段：先用指令打破不走，再用地形课程扩展能力")
+    axes[0].set_ylabel("标准步态评测得分")
+    axes[0].set_xlabel("")
+    axes[0].set_ylim(0, 100)
+    axes[0].set_xticks(standard["x"])
+    axes[0].set_xticklabels(standard["检查点"], rotation=28, ha="right", fontsize=9)
+    axes[0].legend(title="指标", ncol=3, loc="lower right", frameon=False)
+
+    # Panel 2: reward mode vs command mode track navigation
+    ax2 = axes[1]
+    sns.lineplot(data=track, x="x", y="总分", marker="o", color="#2F6DA3", linewidth=2.8, label="总分", ax=ax2)
+    ax2b = ax2.twinx()
+    sns.lineplot(data=track, x="x", y="完成率", marker="o", color="#2E7D6B", linewidth=2.8, label="完成率", ax=ax2b)
+    ax2.axvspan(0.5, 1.5, color="#F2F2F2", alpha=0.7)
+    ax2.axvspan(1.5, 3.5, color="#FFF2DF", alpha=0.75)
+    ax2.axvspan(3.5, 4.5, color="#E9F7F3", alpha=0.75)
+    ax2.axvspan(4.5, 9.5, color="#EAF6EF", alpha=0.55)
+    ax2.text(1.0, 54, "只接接口", ha="center", color="#555555", fontsize=11, weight="bold")
+    ax2.text(2.5, 54, "奖励模式", ha="center", color="#B46B1E", fontsize=11, weight="bold")
+    ax2.text(4.0, 54, "指令模式跃迁", ha="center", color="#2E7D6B", fontsize=11, weight="bold")
+    ax2.text(7.0, 54, "决赛分布调优", ha="center", color="#2E7D6B", fontsize=11, weight="bold")
+    ax2.set_title("B. 赛道导航阶段：奖励模式拉起完成率，指令模式产生结构性跃迁")
+    ax2.set_ylabel("总分")
+    ax2b.set_ylabel("完成率")
+    ax2.set_ylim(0, 58)
+    ax2b.set_ylim(0, 1.02)
+    ax2.set_xticks(track["x"])
+    ax2.set_xticklabels(track["检查点"], rotation=24, ha="right", fontsize=10)
+    ax2.set_xlabel("")
+    lines, labels = ax2.get_legend_handles_labels()
+    lines_b, labels_b = ax2b.get_legend_handles_labels()
+    ax2.legend(lines + lines_b, labels + labels_b, loc="lower right", frameon=False)
+    ax2b.legend_.remove()
+
+    # Panel 3: final distribution trade-off
+    lev_long = levels.melt(
+        id_vars=["检查点", "x"],
+        value_vars=["level5", "level8", "level9"],
+        var_name="难度档",
+        value_name="得分",
+    )
+    lev_long["难度档"] = lev_long["难度档"].map(
+        {
+            "level5": "难度5",
+            "level8": "难度8",
+            "level9": "难度9",
+        }
+    )
+    sns.lineplot(
+        data=lev_long,
+        x="x",
+        y="得分",
+        hue="难度档",
+        marker="o",
+        linewidth=2.6,
+        markersize=8,
+        ax=axes[2],
+    )
+    axes[2].axvspan(1.5, 2.5, color="#FFF2DF", alpha=0.75)
+    axes[2].axvspan(2.5, 4.5, color="#EAF6EF", alpha=0.65)
+    axes[2].axvspan(4.5, 5.5, color="#FCE9DF", alpha=0.75)
+    axes[2].text(2.0, 52, "高难暴露\n抬难度9、伤难度5", ha="center", color="#A34B32", fontsize=10)
+    axes[2].text(3.55, 52, "回填+巩固\n选 12150", ha="center", color="#2E7D6B", fontsize=10, weight="bold")
+    axes[2].text(5.0, 52, "12200\n过训反例", ha="center", color="#A34B32", fontsize=10)
+    axes[2].set_title("C. 决赛分布：最终不是选单项最强，而是选难度5/8/9 的均衡点")
+    axes[2].set_ylabel("分难度得分")
+    axes[2].set_xlabel("")
+    axes[2].set_ylim(0, 60)
+    axes[2].set_xticks(levels["x"])
+    axes[2].set_xticklabels(levels["检查点"], rotation=20, ha="right", fontsize=10)
+    axes[2].set_xlabel("")
+    axes[2].legend(title="难度档", ncol=3, loc="lower right", frameon=False)
+
+    save(fig, "curriculum_modes_data_curve.png")
+
+
 def plot_p9_summary():
     data = pd.DataFrame(
         [
@@ -269,6 +421,7 @@ def plot_track_progression():
 
 def main():
     setup_style()
+    plot_curriculum_modes_data_curve()
     plot_p9_summary()
     plot_level_tradeoff_heatmap()
     plot_standard_curriculum()

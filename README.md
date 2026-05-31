@@ -24,6 +24,10 @@
 
 这些图全部由 `scripts/plot_experiment_figures.py` 从 `EXPERIMENTS.md` 中已经沉淀的关键数值整理而来。它们的作用不是替代完整实验记录，而是先把当前答辩故事线可视化出来。
 
+![课程与模式选择数据曲线](assets/figures/curriculum_modes_data_curve.png)
+
+这张图是主线图：上半段说明标准步态阶段为什么要分“指令引导步态、地形课程、过载课程反例、单变量全难度”几步走；中间说明赛道阶段不是单靠 reward，而是先用导航 reward 拉起完成率，再用 command 槽导航产生结构性跃迁；下半段说明最终选择 **`Plast_12150`**，不是因为它单项最强，而是因为它在难度5/8/9 之间最均衡。
+
 ![P9 检查点对比](assets/figures/p9_checkpoint_summary.png)
 
 这张图说明为什么当前保护 **`Plast_12150`**：它相对 P8 基线提高总分和完成率，而 `Plast_12200` 虽然局部能力更强，但整体已经回落。
