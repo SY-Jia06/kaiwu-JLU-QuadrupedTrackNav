@@ -364,6 +364,200 @@ def plot_standard_curriculum():
     save(fig, "standard_curriculum_curve.png")
 
 
+def plot_standard_same_setting_scaling():
+    """Same-eval-setting standard checkpoint sweep up to the 10500 checkpoint."""
+    data = pd.DataFrame(
+        [
+            ("C0-500", "P1 固定直行", 1, 500, 29.98, False),
+            ("C0-1000", "P1 固定直行", 2, 1000, 52.90, False),
+            ("C0-1500", "P1 固定直行", 3, 1500, 54.99, False),
+            ("C0-2000", "P1 固定直行", 4, 2000, 56.31, False),
+            ("C0-2500", "P1 固定直行", 5, 2500, 56.20, True),
+            ("P2-3000", "P2 地形课程", 6, 3000, 62.20, False),
+            ("P2-3500", "P2 地形课程", 7, 3500, 65.59, False),
+            ("P2-4000", "P2 地形课程", 8, 4000, 68.98, True),
+            ("P2-4500", "P2 地形课程", 9, 4500, 66.42, False),
+            ("P2-5000", "P2 地形课程", 10, 5000, 63.81, False),
+            ("P2-6000", "P2 地形课程", 11, 6000, 58.92, False),
+            ("P3-5000", "P3 过载反例", 12, 5000, 57.28, False),
+            ("P3-5500", "P3 过载反例", 13, 5500, 55.48, False),
+            ("P3-6000", "P3 过载反例", 14, 6000, 48.65, False),
+            ("P3-6500", "P3 过载反例", 15, 6500, 34.82, False),
+            ("P3-7000", "P3 过载反例", 16, 7000, 23.82, False),
+            ("P3+-4500", "P3+ 单变量修复", 17, 4500, 68.86, False),
+            ("P3+-5000", "P3+ 单变量修复", 18, 5000, 68.64, True),
+            ("P3+-6000", "P3+ 单变量修复", 19, 6000, 71.52, False),
+            ("P3+-7000", "P3+ 单变量修复", 20, 7000, 70.19, False),
+            ("P4-5500", "P4 迷宫适应", 21, 5500, 67.24, False),
+            ("P4-6000", "P4 迷宫适应", 22, 6000, 68.96, False),
+            ("P4-6500", "P4 迷宫适应", 23, 6500, 66.73, False),
+            ("P4-7000", "P4 迷宫适应", 24, 7000, 69.92, False),
+            ("P4-9000", "P4 迷宫适应", 25, 9000, 69.78, False),
+            ("P5-10500", "P5 奖励对齐", 26, 10500, 72.04, True),
+        ],
+        columns=["检查点", "阶段", "顺序", "训练步数", "总分", "选择"],
+    )
+
+    palette = {
+        "P1 固定直行": "#5B8FB9",
+        "P2 地形课程": "#2E7D6B",
+        "P3 过载反例": "#C56A3D",
+        "P3+ 单变量修复": "#3A7D44",
+        "P4 迷宫适应": "#7A90A4",
+        "P5 奖励对齐": "#1F5F98",
+    }
+    fig, ax = plt.subplots(figsize=(16, 6.8))
+
+    main_labels = [
+        "C0-500",
+        "C0-1000",
+        "C0-1500",
+        "C0-2000",
+        "C0-2500",
+        "P2-3000",
+        "P2-3500",
+        "P2-4000",
+        "P3+-4500",
+        "P3+-6000",
+        "P4-7000",
+        "P4-9000",
+        "P5-10500",
+    ]
+    main_path = data[data["检查点"].isin(main_labels)].copy()
+    main_path["主线顺序"] = main_path["检查点"].map({label: idx for idx, label in enumerate(main_labels)})
+    main_path = main_path.sort_values("主线顺序")
+
+    p3_branch = data[data["检查点"].isin(["P2-4000", "P3-5000", "P3-5500", "P3-6000", "P3-6500", "P3-7000"])].copy()
+    p3_branch["主线顺序"] = p3_branch["检查点"].map(
+        {
+            "P2-4000": 0,
+            "P3-5000": 1,
+            "P3-5500": 2,
+            "P3-6000": 3,
+            "P3-6500": 4,
+            "P3-7000": 5,
+        }
+    )
+    p3_branch = p3_branch.sort_values("主线顺序")
+
+    side_labels = ["P2-4500", "P2-5000", "P2-6000", "P3+-5000", "P3+-7000", "P4-5500", "P4-6000", "P4-6500"]
+    side_points = data[data["检查点"].isin(side_labels)].copy()
+
+    stage_guides = [
+        (500, 2500, 76.2, "P1 固定直行", "#2F6DA3"),
+        (3000, 4000, 76.2, "P2 地形课程", "#2E7D6B"),
+        (4500, 7000, 76.2, "P3+ 拆变量恢复", "#2E7D6B"),
+        (7000, 10500, 78.0, "P4/P5 巩固", "#475569"),
+    ]
+    for x0, x1, y, label, color in stage_guides:
+        ax.annotate(
+            "",
+            xy=(x1, y),
+            xytext=(x0, y),
+            arrowprops={"arrowstyle": "<->", "color": color, "lw": 1.6},
+        )
+        ax.text((x0 + x1) / 2, y + 0.35, label, ha="center", va="bottom", fontsize=10, color=color, weight="bold")
+
+    solid = main_path[main_path["主线顺序"] <= 7]
+    rising = main_path[main_path["主线顺序"] >= 7]
+    ax.plot(
+        solid["训练步数"],
+        solid["总分"],
+        color="#111827",
+        linewidth=3.2,
+        marker="o",
+        markersize=7,
+        markeredgecolor="white",
+        markeredgewidth=1.1,
+        zorder=4,
+        label="涨分主线",
+    )
+    ax.plot(
+        rising["训练步数"],
+        rising["总分"],
+        color="#111827",
+        linewidth=3.0,
+        linestyle=(0, (6, 4)),
+        marker="o",
+        markersize=7,
+        markeredgecolor="white",
+        markeredgewidth=1.1,
+        zorder=4,
+        label="回退后继续涨分",
+    )
+    ax.plot(
+        p3_branch["训练步数"],
+        p3_branch["总分"],
+        color=palette["P3 过载反例"],
+        linewidth=2.6,
+        linestyle=(0, (5, 4)),
+        marker="o",
+        markersize=7,
+        markeredgecolor="white",
+        markeredgewidth=1.0,
+        alpha=0.86,
+        zorder=3,
+        label="P3 过载下坠分支",
+    )
+    ax.scatter(
+        side_points["训练步数"],
+        side_points["总分"],
+        s=70,
+        color="#7A90A4",
+        edgecolor="white",
+        linewidth=1.0,
+        alpha=0.78,
+        zorder=3,
+        label="补充扫点",
+    )
+
+    selected = data[data["选择"]].copy()
+    ax.scatter(
+        selected["训练步数"],
+        selected["总分"],
+        marker="*",
+        color="#111827",
+        s=260,
+        edgecolor="white",
+        linewidth=1.0,
+        zorder=5,
+        label="实际进入下一阶段",
+    )
+
+    for _, row in selected.iterrows():
+        ax.text(
+            row["训练步数"],
+            row["总分"] + 1.6,
+            f"{row['检查点']}\n{row['总分']:.2f}",
+            ha="center",
+            va="bottom",
+            fontsize=10,
+            color="#111827",
+            weight="bold",
+        )
+
+    max_row = data.loc[data["总分"].idxmax()]
+    ax.annotate(
+        "10500 最高",
+        xy=(10500, max_row["总分"]),
+        xytext=(8600, max_row["总分"] + 2.6),
+        arrowprops={"arrowstyle": "->", "color": "#1F5F98", "lw": 1.8},
+        color="#1F5F98",
+        fontsize=12,
+        weight="bold",
+    )
+
+    ax.set_title("同一评测口径下的标准步态能力曲线：到 P5-10500 截止")
+    ax.set_xlabel("step 数")
+    ax.set_ylabel("总分")
+    ax.set_ylim(20, 80)
+    ax.set_xlim(350, 10750)
+    ax.set_xticks(range(500, 10501, 500))
+    ax.tick_params(axis="x", rotation=35, labelsize=8)
+    ax.legend(title="", loc="center left", bbox_to_anchor=(1.01, 0.5), frameon=False)
+    save(fig, "standard_same_setting_scaling_curve.png")
+
+
 def plot_track_progression():
     data = pd.DataFrame(
         [
@@ -485,6 +679,7 @@ def main():
     plot_p9_summary()
     plot_level_tradeoff_heatmap()
     plot_standard_curriculum()
+    plot_standard_same_setting_scaling()
     plot_track_progression()
 
 

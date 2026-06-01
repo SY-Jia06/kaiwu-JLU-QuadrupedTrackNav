@@ -74,7 +74,7 @@
           </article>
         </div>
         <div class="three-questions">
-          <div><b>1. 先会走</b><span>command 课程 + terrain curriculum，把“站稳但不走”变成可迁移 gait。</span></div>
+          <div><b>1. 先会走</b><span>command 课程 + terrain curriculum，把“站稳但不走”变成可迁移步态。</span></div>
           <div><b>2. 再会找路</b><span>goal obs + waypoint，把导航意图翻译成旧 policy 听得懂的 command 槽。</span></div>
           <div><b>3. 最后全分布稳</b><span>P8/P9 调整训练分布，在 level5/8/9 的 trade-off 中选均衡 checkpoint。</span></div>
         </div>
@@ -85,24 +85,24 @@
         <div class="slide-number">03</div>
         <h2>第一层</h2>
         <figure class="wide-figure">
-          <img src="../assets/figures/standard_curriculum_curve.png" alt="标准步态课程曲线" />
-          <figcaption>standard 阶段：P3 过载课程失败，P3+ 单变量全难度恢复并提升。</figcaption>
+          <img src="../assets/figures/standard_same_setting_scaling_curve.png" alt="同评测口径的标准步态能力曲线" />
+          <figcaption>同一平台 eval setting：P3 过载崩溃，P3+ 拆变量恢复，P5-10500 达到当前最高点。</figcaption>
         </figure>
         <div class="scaling-note">
           <div>
             <b>这张图能讲什么</b>
-            <span>score 随训练步数先上升；课程一次性过载会崩；拆回单变量后恢复并超过旧峰值。</span>
+            <span>同口径平台分数可以直接比较；P1/P2/P3+/P4/P5 的 sweep 说明能力不是靠单点 reward，而是沿阶段逐步抬上来。</span>
           </div>
           <div>
             <b>还不能硬说什么</b>
-            <span>严格 scaling law 需要固定 eval setting 与训练配置。现在更适合叫“训练投入-能力趋势草图”，后续可补同口径 eval 点。</span>
+            <span>P3/P3+/P4 是分支扫点，训练配置并非完全连续。更稳妥的说法是“同评测 setting 下的 checkpoint scaling 曲线”。</span>
           </div>
         </div>
       </section>
 
       <section class="slide" id="s04">
         <div class="slide-number">04</div>
-        <h2>第一节课：P1 固定直行命令，先让 gait 长出来</h2>
+        <h2>第一节课：P1 固定直行命令，先让步态长出来</h2>
         <div class="lesson-layout">
           <div>
             <p class="claim small">
@@ -125,7 +125,7 @@
                 <tr>
                   <td>command</td>
                   <td>vx [0.3, 0.8]；vy [0, 0]；wz [0, 0]；resample [8, 12]s</td>
-                  <td>强制形成 forward gait</td>
+                  <td>强制形成前进步态</td>
                 </tr>
                 <tr class="chosen">
                   <td>terrain</td>
@@ -154,26 +154,26 @@
                 <tr class="chosen"><td>2500</td><td class="max">57.86</td><td class="max">68.68</td><td>16.59</td></tr>
               </tbody>
             </table>
-            <p>2500 的总分、姿态和能耗更稳，适合作为进入 P2 的基础 gait。</p>
+            <p>2500 的总分、姿态和能耗更稳，适合作为进入 P2 的基础步态。</p>
           </div>
         </div>
         <div class="video-slot wide">
           <span>视频/GIF 槽</span>
-          <b>P1 低难直行 gait 形成：从“不稳定推进”到可进入地形课程</b>
+          <b>P1 低难直行步态形成：从“不稳定推进”到可进入地形课程</b>
         </div>
       </section>
 
       <section class="slide" id="s05">
         <div class="slide-number">05</div>
-        <h2>第二节课：P2 把直行 gait 迁移到坡和台阶</h2>
+        <h2>第二节课：P2 把直行步态迁移到坡和台阶</h2>
         <p class="plain-thesis slide-intro">
-          P1 已经能向前走，但反台阶仍是 time=0。P2 不换模型、不换目标，只扩大地形训练分布并开启摩擦随机化，看 gait 能不能迁移到更复杂地形。
+          P1 已经能向前走，但反台阶仍是 time=0。P2 不换模型、不换目标，只扩大地形训练分布并开启摩擦随机化，看步态能不能迁移到更复杂地形。
         </p>
         <div class="curriculum-flow">
           <article class="flow-card">
             <span>起点</span>
             <h3>P1-2500</h3>
-            <p>低难直行 gait 已形成，但反台阶还没有真正通过。</p>
+            <p>低难直行步态已形成，但反台阶还没有真正通过。</p>
             <b>stairs_inv 26.46 / 0</b>
           </article>
           <div class="flow-arrow">→</div>
@@ -397,7 +397,7 @@
           <article class="arch-box policy-box">
             <span>神经网络</span>
             <h3>Policy πθ</h3>
-            <p>复用 standard locomotion 学到的 gait，只需要按 command 执行。</p>
+            <p>复用 standard locomotion 学到的步态，只需要按 command 执行。</p>
           </article>
           <div class="arch-arrow arrow-d">→</div>
           <article class="arch-box action-box">
@@ -413,7 +413,7 @@
           </article>
           <article>
             <h3>迁移怎么保住？</h3>
-            <p>旧 checkpoint 精确加载原输入权重；新增 goal 输入列从零开始，避免一开始破坏 gait。</p>
+            <p>旧 checkpoint 精确加载原输入权重；新增 goal 输入列从零开始，避免一开始破坏步态。</p>
           </article>
         </div>
       </section>
@@ -498,7 +498,7 @@
         <div class="closing-grid">
           <article>
             <span>01</span>
-            <h3>先训稳可迁移 gait</h3>
+            <h3>先训稳可迁移步态</h3>
             <p>command 课程打破不走，terrain curriculum 扩展地形能力。</p>
           </article>
           <article>
