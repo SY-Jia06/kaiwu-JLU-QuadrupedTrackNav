@@ -28,6 +28,10 @@
 
 当前有一个可直接打开的分页 HTML 原型：[story/index.html](story/index.html)。它按“可迁移步态 → 可控导航接口 → 决赛分布巩固”的骨架组织，每个 `<section>` 对应一页后续可迁移到 PPT 的内容。
 
+### Git 开发记录
+
+真实代码开发 worktree 与当前展示仓库的提交历史整理在 [docs/DEVELOPMENT_GIT_HISTORY.md](docs/DEVELOPMENT_GIT_HISTORY.md)。这份记录用于说明代码如何从 standard locomotion 演化到 track-nav 框架；完整 checkpoint sweep 与平台评测结果仍以 [EXPERIMENTS.md](EXPERIMENTS.md) 为准。
+
 ### Checkpoint 选择树
 
 这棵树只回答一个问题：每个阶段扫了多个 checkpoint 之后，最后选谁作为下一阶段起点。绿色节点是被继承的主线，橙色节点是局部更强但不适合继续继承的反例，灰色节点是评测后淘汰的点。
